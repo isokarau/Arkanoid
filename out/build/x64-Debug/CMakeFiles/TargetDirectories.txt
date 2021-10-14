@@ -1,0 +1,10 @@
+E:/Prog/press_fire_games/arkanoid/out/build/x64-Debug/CMakeFiles/glad.dir
+E:/Prog/press_fire_games/arkanoid/out/build/x64-Debug/CMakeFiles/imgui.dir
+E:/Prog/press_fire_games/arkanoid/out/build/x64-Debug/CMakeFiles/edit_cache.dir
+E:/Prog/press_fire_games/arkanoid/out/build/x64-Debug/CMakeFiles/Arkanoid.dir
+E:/Prog/press_fire_games/arkanoid/out/build/x64-Debug/CMakeFiles/rebuild_cache.dir
+E:/Prog/press_fire_games/arkanoid/out/build/x64-Debug/glfw_binary/CMakeFiles/edit_cache.dir
+E:/Prog/press_fire_games/arkanoid/out/build/x64-Debug/glfw_binary/CMakeFiles/rebuild_cache.dir
+E:/Prog/press_fire_games/arkanoid/out/build/x64-Debug/glfw_binary/src/CMakeFiles/rebuild_cache.dir
+E:/Prog/press_fire_games/arkanoid/out/build/x64-Debug/glfw_binary/src/CMakeFiles/glfw.dir
+E:/Prog/press_fire_games/arkanoid/out/build/x64-Debug/glfw_binary/src/CMakeFiles/edit_cache.dir
