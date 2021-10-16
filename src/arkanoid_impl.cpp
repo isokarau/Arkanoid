@@ -2,6 +2,8 @@
 
 #include <GLFW/glfw3.h>
 
+#include <algorithm>
+
 #ifdef USE_ARKANOID_IMPL
 Arkanoid* create_arkanoid()
 {
@@ -36,11 +38,15 @@ void ArkanoidImpl::update(ImGuiIO& io, ArkanoidDebugData& debug_data, float elap
     world_to_screen = Vect(io.DisplaySize.x / world_size.x, io.DisplaySize.y / world_size.y);
 
     // process user input
-    if (io.KeysDown[GLFW_KEY_A])
+    if (io.KeysDown[GLFW_KEY_A]) {
         ball_velocity.x -= 1.0f;
+        carriage_position.x -= std::min(carriage_shift, carriage_position.x - carriage_width * 0.5f);
+    }
 
-    if (io.KeysDown[GLFW_KEY_D])
+    if (io.KeysDown[GLFW_KEY_D]) {
         ball_velocity.x += 1.0f;
+        carriage_position.x += std::min(carriage_shift, world_size.x - (carriage_position.x + carriage_width * 0.5f));
+    }
 
     if (io.KeysDown[GLFW_KEY_W])
         ball_velocity.y -= 1.0f;
@@ -99,6 +105,13 @@ void ArkanoidImpl::draw(ImGuiIO& io, ImDrawList &draw_list)
     float ball_screen_radius = ball_radius * world_to_screen.x;
     draw_list.AddCircleFilled(ball_screen_pos, ball_screen_radius, ImColor(100, 255, 100));
 
+    Vect carriage_screen_pos = carriage_position * world_to_screen;
+    float carriage_screen_width = carriage_width * world_to_screen.x;
+    float carriage_screen_height = carriage_height * world_to_screen.y;
+    draw_list.AddRectFilled(
+            {carriage_screen_pos.x - carriage_screen_width / 2, carriage_screen_pos.y - carriage_screen_height}, 
+            {carriage_screen_pos.x + carriage_screen_width / 2, carriage_screen_pos.y}, 
+            ImColor(212, 175, 55));
     // TODO:
     // Implement you Arkanoid drawing
     // ...

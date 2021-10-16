@@ -32,4 +32,6 @@ private:
     float ball_initial_speed = 0.0f;
 
     float carriage_width = 0.0f;
+    const float carriage_height = 20;
+    const float carriage_shift = 20;
 };
