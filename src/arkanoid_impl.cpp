@@ -50,13 +50,6 @@ std::vector<Brick> BuildBricks(const ArkanoidSettings& settings, float brick_wid
 
 void ArkanoidImpl::reset(const ArkanoidSettings &settings)
 {
-    // TODO:
-    // Implement your game world, bricks and
-    // carriage initialization
-    // ...
-
-    // TODO:
-    // remove demo code
     world_size.x = settings.world_size[0];
     world_size.y = settings.world_size[1];
 
@@ -111,6 +104,7 @@ void ArkanoidImpl::update(ImGuiIO& io, ArkanoidDebugData& debug_data, float elap
         ball_position.x <= carriage_position.x) // if the ball hits to the left side of carriage
     {
         std::cout << "Hit to the left side" << std::endl;
+        ball_position.y -= (ball_position.y - (carriage_position.y - carriage_height - ball_radius)) * 2.0f;
         ball_velocity.y *= -1.0f;
         ball_velocity.x = -abs(ball_velocity.x);
     }
@@ -119,9 +113,11 @@ void ArkanoidImpl::update(ImGuiIO& io, ArkanoidDebugData& debug_data, float elap
              ball_position.x > carriage_position.x)  // if the ball hits to the right side of carriage
     {
         std::cout << "Hit to the right side" << std::endl;
+        ball_position.y -= (ball_position.y - (carriage_position.y - carriage_height - ball_radius)) * 2.0f;
         ball_velocity.y *= -1.0f;
         ball_velocity.x = abs(ball_velocity.x);
-    }
+    } 
+    
     if (ball_position.x < ball_radius)
     {
         ball_position.x += (ball_radius - ball_position.x) * 2.0f;
@@ -132,7 +128,7 @@ void ArkanoidImpl::update(ImGuiIO& io, ArkanoidDebugData& debug_data, float elap
     else if (ball_position.x > (world_size.x - ball_radius))
     {
         ball_position.x -= (ball_position.x - (world_size.x - ball_radius)) * 2.0f;
-        ball_velocity.x *= -1.0f;
+        ball_velocity.x *= -1.0f;   
 
         add_debug_hit(debug_data, Vect(world_size.x, ball_position.y), Vect(-1, 0));
     }
@@ -151,43 +147,71 @@ void ArkanoidImpl::update(ImGuiIO& io, ArkanoidDebugData& debug_data, float elap
 
         add_debug_hit(debug_data, Vect(ball_position.x, world_size.y), Vect(0, -1));
     }
-    // TODO:
-    // Implement you Arkanoid user input handling
-    // and game logic.
-    // ...
-    
-    // TODO:
-    // remove demo code
+    for (auto& brick : bricks) {
+        if (brick.alive) {
+            if (ball_position.x >= brick.upper_left_corner.x && ball_position.x <= brick.bottom_right_corner.x &&
+                ball_position.y < brick.bottom_right_corner.y + ball_radius &&
+                ball_position.y >= brick.bottom_right_corner.y)
+            {
+                ball_position.y += (brick.bottom_right_corner.y + ball_radius - ball_position.y) * 2.0f;
+                ball_velocity.y *= -1.0f;
+                brick.alive = false;
+                add_debug_hit(debug_data, Vect(ball_position.x, brick.bottom_right_corner.y), Vect(0, 1));
+            }
+            else if (ball_position.x >= brick.upper_left_corner.x && ball_position.x <= brick.bottom_right_corner.x &&
+                ball_position.y > brick.upper_left_corner.y - ball_radius &&
+                ball_position.y <= brick.upper_left_corner.y)
+            {
+                ball_position.y -= ball_position.y - (brick.upper_left_corner.y - ball_radius) * 2.0f;
+                ball_velocity.y *= -1.0f;
+                brick.alive = false;
+                add_debug_hit(debug_data, Vect(ball_position.x, brick.upper_left_corner.y), Vect(0, -1));
+            }
+            
+            if (ball_position.y >= brick.upper_left_corner.y && ball_position.y <= brick.bottom_right_corner.y &&
+                ball_position.x < brick.bottom_right_corner.x + ball_radius &&
+                ball_position.x >= brick.bottom_right_corner.x) 
+            {
+                ball_position.x += (brick.bottom_right_corner.x + ball_radius - ball_position.x) * 2.0f;
+                ball_velocity.x *= -1.0f;
+                brick.alive = false;
+                add_debug_hit(debug_data, Vect(brick.bottom_right_corner.x, ball_position.y), Vect(1, 0));
+            } else if (ball_position.y >= brick.upper_left_corner.y && ball_position.y <= brick.bottom_right_corner.y &&
+                ball_position.x > brick.upper_left_corner.x - ball_radius &&
+                ball_position.x <= brick.upper_left_corner.x)
+            {
+                ball_position.x -= (ball_position.x - (brick.upper_left_corner.x - ball_radius)) * 2.0f;
+                ball_velocity.x *= -1.0f;
+                brick.alive = false;
+                add_debug_hit(debug_data, Vect(brick.upper_left_corner.x, ball_position.y), Vect(-1, 0));
+            }
+        }
+    }
 }
 
 void ArkanoidImpl::draw(ImGuiIO& io, ImDrawList &draw_list)
 {
     Vect ball_screen_pos = ball_position * world_to_screen;
     float ball_screen_radius = ball_radius * world_to_screen.x;
-    draw_list.AddCircleFilled(ball_screen_pos, ball_screen_radius, ImColor(100, 255, 100));
+    draw_list.AddCircleFilled(ball_screen_pos, ball_screen_radius, ImColor(100, 255, 100)); // drawing ball
 
     Vect carriage_screen_pos = carriage_position * world_to_screen;
     float carriage_screen_width = carriage_width * world_to_screen.x;
     float carriage_screen_height = carriage_height * world_to_screen.y;
-    draw_list.AddRectFilled(
-            {carriage_screen_pos.x - carriage_screen_width / 2, carriage_screen_pos.y - carriage_screen_height}, 
-            {carriage_screen_pos.x + carriage_screen_width / 2, carriage_screen_pos.y}, 
+    draw_list.AddRectFilled( // drawing carriage
+            {carriage_screen_pos.x - carriage_screen_width * 0.5f, carriage_screen_pos.y - carriage_screen_height}, 
+            {carriage_screen_pos.x + carriage_screen_width * 0.5f, carriage_screen_pos.y}, 
             ImColor(221, 160, 221));
 
-    for (const auto& brick : bricks) {
-        Vect block_screen_pos_upper_left = brick.upper_left_corner * world_to_screen;
-        Vect block_screen_pos_bottom_right = brick.bottom_right_corner * world_to_screen;
-        draw_list.AddRectFilled(
-            block_screen_pos_upper_left, block_screen_pos_bottom_right, ImColor(255, 160, 122));
+    for (const auto& brick : bricks) { //drawing bricks
+        if (brick.alive) {
+            Vect block_screen_pos_upper_left = brick.upper_left_corner * world_to_screen;
+            Vect block_screen_pos_bottom_right = brick.bottom_right_corner * world_to_screen;
+            draw_list.AddRectFilled(
+                block_screen_pos_upper_left, block_screen_pos_bottom_right, ImColor(255, 160, 122));
+
+        }
     }
-
-    //draw_list.AddRectFilled({ 0, 0 }, { 20, 200 }, ImColor(255, 160, 122));
-    // TODO:
-    // Implement you Arkanoid drawing
-    // ...
-
-    // TODO:
-    // remove demo code
 }
 
 void ArkanoidImpl::add_debug_hit(ArkanoidDebugData& debug_data, const Vect& world_pos, const Vect& normal)
