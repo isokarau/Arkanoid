@@ -2,7 +2,23 @@
 
 #include "arkanoid.h"
 
+#include <vector>
+
 #define USE_ARKANOID_IMPL
+
+class Brick {
+public:
+    Brick();
+    Brick(Vect _upper_left_corner, Vect _bottom_right_corner);
+
+    Vect upper_left_corner;
+    Vect bottom_right_corner;
+    bool alive;
+
+    bool IsAlive();
+    void Destroy();
+    void SetCorners(Vect upper_left_corner, Vect bottom_right_corner);
+};
 
 class ArkanoidImpl : public Arkanoid
 {
@@ -24,6 +40,11 @@ private:
 
     int bricks_columns_count = 15;
     int bricks_rows_count = 7;
+
+    std::vector<Brick> bricks;
+
+    float brick_width;
+    float brick_height = 20;
 
     float bricks_columns_padding = 5.0f;
     float bricks_rows_padding = 5.0f;
