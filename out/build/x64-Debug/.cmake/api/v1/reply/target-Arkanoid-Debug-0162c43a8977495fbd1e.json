@@ -122,15 +122,15 @@
 	[
 		{
 			"backtrace" : 2,
+			"id" : "glfw::@9bcb4b129cf94f8af7e7"
+		},
+		{
+			"backtrace" : 2,
 			"id" : "glad::@6890427a1f51a3e7e1df"
 		},
 		{
 			"backtrace" : 2,
 			"id" : "imgui::@6890427a1f51a3e7e1df"
-		},
-		{
-			"backtrace" : 2,
-			"id" : "glfw::@9bcb4b129cf94f8af7e7"
 		}
 	],
 	"id" : "Arkanoid::@6890427a1f51a3e7e1df",

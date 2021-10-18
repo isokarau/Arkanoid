@@ -44,7 +44,7 @@ struct ArkanoidDebugData
         Vect normal;            // Hit normal
         float time = 0.0f;      // leave it default
     };
-    
+
     std::vector<Hit> hits;
 };
 
